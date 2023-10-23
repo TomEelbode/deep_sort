@@ -92,6 +92,7 @@ class Visualization(object):
         image_shape = 1024, int(aspect_ratio * 1024)
         self.viewer = ImageViewer(
             update_ms, image_shape, "Figure %s" % seq_info["sequence_name"])
+        self.viewer.enable_videowriter(seq_info["sequence_name"] + '.mp4', fourcc_string='mp4v', fps=25.0)
         self.viewer.thickness = 2
         self.frame_idx = seq_info["min_frame_idx"]
         self.last_idx = seq_info["max_frame_idx"]

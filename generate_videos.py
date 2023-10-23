@@ -40,6 +40,9 @@ if __name__ == "__main__":
 
     os.makedirs(args.output_dir, exist_ok=True)
     for sequence_txt in os.listdir(args.result_dir):
+        if not sequence_txt.endswith('.txt'):
+            continue
+        print(sequence_txt)
         sequence = os.path.splitext(sequence_txt)[0]
         sequence_dir = os.path.join(args.mot_dir, sequence)
         if not os.path.exists(sequence_dir):

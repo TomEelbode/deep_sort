@@ -82,6 +82,7 @@ class ImageEncoder(object):
         self.output_var = tf.get_default_graph().get_tensor_by_name(
             "net/%s:0" % output_name)
 
+        print(self.input_var, self.output_var)
         assert len(self.output_var.get_shape()) == 2
         assert len(self.input_var.get_shape()) == 4
         self.feature_dim = self.output_var.get_shape().as_list()[-1]
@@ -147,12 +148,18 @@ def generate_detections(encoder, mot_dir, output_dir, detection_dir=None):
 
     for sequence in os.listdir(mot_dir):
         print("Processing %s" % sequence)
+        if sequence.startswith('.'):
+            continue
         sequence_dir = os.path.join(mot_dir, sequence)
 
         image_dir = os.path.join(sequence_dir, "img1")
+        fns = []
+        for f in os.listdir(image_dir):
+            if not f.startswith('.'):
+                fns.append(f)
         image_filenames = {
             int(os.path.splitext(f)[0]): os.path.join(image_dir, f)
-            for f in os.listdir(image_dir)}
+            for f in fns}
 
         detection_file = os.path.join(
             detection_dir, sequence, "det/det.txt")
