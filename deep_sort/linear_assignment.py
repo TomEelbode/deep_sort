@@ -1,7 +1,13 @@
 # vim: expandtab:ts=4:sw=4
 from __future__ import absolute_import
 import numpy as np
-from sklearn.utils.linear_assignment_ import linear_assignment
+
+# try:
+# from sklearn.utils.linear_assignment_ import linear_assignment
+# except ModuleNotFoundError:
+
+from scipy.optimize import linear_sum_assignment as linear_assignment
+
 from . import kalman_filter
 
 
@@ -56,6 +62,13 @@ def min_cost_matching(
         tracks, detections, track_indices, detection_indices)
     cost_matrix[cost_matrix > max_distance] = max_distance + 1e-5
     indices = linear_assignment(cost_matrix)
+
+    ### Fix for different return format of linear_assignment of scipy vs sklearn
+    # sklearn output [(row1, col1), (row2, col2), ...]
+    # scipy output [[row1, row2], [col1, col2]]
+    indices = np.asarray([[row, col] for row, col in zip(indices[0], indices[1])])
+    if len(indices) == 0:
+        indices = np.empty((0, 2), dtype=int)
 
     matches, unmatched_tracks, unmatched_detections = [], [], []
     for col, detection_idx in enumerate(detection_indices):
